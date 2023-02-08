@@ -125,7 +125,7 @@ export default class MainScene extends Phaser.Scene {
     removePlayer(res) {
         this.otherPlayers.forEach((player) => {
             if (player.socketId === res) {
-                return player.destroy();
+                player.destroy();
             }
         });
         this.otherPlayers.filter((player) => player.socketId !== res);
