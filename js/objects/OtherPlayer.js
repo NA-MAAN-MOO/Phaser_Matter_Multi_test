@@ -8,7 +8,7 @@ export default class OtherPlayer extends Phaser.Physics.Matter.Sprite {
         this.scene.add.existing(this); // 플레이어 객체가 생기는 시점.
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.circle(this.x, this.y, 12, {
+        let playerCollider = Bodies.circle(this.x, this.y, 24, {
             isSensor: false,
             label: "playerCollider",
         });
