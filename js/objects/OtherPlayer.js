@@ -1,8 +1,9 @@
 export default class OtherPlayer extends Phaser.Physics.Matter.Sprite {
     constructor(data) {
-        let { scene, x, y, texture, frame, socketId } = data;
-        super(scene.matter.world, x, y, texture, frame);
-        this.socketId = socketId;
+        let { scene, x, y, texture, id, frame } = data;
+        super(scene.matter.world, x, y, texture, id, frame);
+
+        this.playerTexture = texture;
         this.touching = [];
         this.scene.add.existing(this); // 플레이어 객체가 생기는 시점.
 
@@ -21,20 +22,14 @@ export default class OtherPlayer extends Phaser.Physics.Matter.Sprite {
         });
         this.setExistingBody(compoundBody);
         this.setFixedRotation();
-
-        this.playerFacing = {
-            left: "LEFT",
-            right: "RIGHT",
-        };
-        this.currentFacing = this.playerFacing.right;
     }
 
     static preload(scene) {
         /* Characters */
         scene.load.atlas(
             "male1",
-            "assets/villager-males.png",
-            "assets/male1.json"
+            "assets/images/villager-males.png",
+            "assets/images/male1.json"
         );
     }
 

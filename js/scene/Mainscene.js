@@ -114,8 +114,9 @@ export default class MainScene extends Phaser.Scene {
             scene: this,
             x: playerInfo.y,
             y: playerInfo.x,
-            texture: "dino", // 이미지 이름
-            frame: "dinosprites_doux_0", // atlas.json의 첫번째 filename
+            texture: "male1", // 이미지 이름
+            id: playerInfo.socketId,
+            frame: "down-1", // atlas.json의 첫번째 filename
         });
         otherPlayer.socketId = playerInfo.socketId;
         this.otherPlayers.push(otherPlayer);
@@ -135,23 +136,23 @@ export default class MainScene extends Phaser.Scene {
             if (player.socketId === payLoad.socketId) {
                 switch (payLoad.motion) {
                     case "left":
-                        player.play(`${this.playerTexture}-walk-left`, true);
+                        player.play(`${player.playerTexture}-walk-left`, true);
                         player.setPosition(payLoad.x, payLoad.y);
                         break;
                     case "right":
-                        player.play(`${this.playerTexture}-walk-right`, true);
+                        player.play(`${player.playerTexture}-walk-right`, true);
                         player.setPosition(payLoad.x, payLoad.y);
                         break;
                     case "up":
-                        player.play(`${this.playerTexture}-walk-up`, true);
+                        player.play(`${player.playerTexture}-walk-up`, true);
                         player.setPosition(payLoad.x, payLoad.y);
                         break;
                     case "down":
-                        player.play(`${this.playerTexture}-walk-down`, true);
+                        player.play(`${player.playerTexture}-walk-down`, true);
                         player.setPosition(payLoad.x, payLoad.y);
                         break;
                     case "idle":
-                        player.play(`${this.playerTexture}-walk-idle`, true);
+                        player.play(`${player.playerTexture}-walk-idle`, true);
                         player.setPosition(payLoad.x, payLoad.y);
                         break;
                 }
