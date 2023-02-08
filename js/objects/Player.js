@@ -1,23 +1,15 @@
 export default class Player extends Phaser.Physics.Matter.Sprite {
     constructor(data) {
-        let { scene, x, y, texture, frame } = data;
-        super(scene.matter.world, x, y, texture, frame);
+        let { scene, x, y, texture, id, frame } = data;
+
+        super(scene.matter.world, x, y, texture, id, frame);
+
+        this.playerTexture = texture;
         this.touching = [];
         this.scene.add.existing(this); // 플레이어 객체가 생기는 시점.
-        // icons
-        // this.spriteIcon = new Phaser.GameObjects.Sprite(
-        //     this.scene,
-        //     0,
-        //     0,
-        //     "items",
-        //     5
-        // );
-        // this.spriteIcon.setScale(0.8);
-        // this.spriteIcon.setOrigin(0.25, 0.75);
-        // this.scene.add.existing(this.spriteIcon);
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.circle(this.x, this.y, 12, {
+        let playerCollider = Bodies.circle(this.x, this.y, 24, {
             isSensor: false,
             label: "playerCollider",
         });
@@ -31,29 +23,15 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         });
         this.setExistingBody(compoundBody);
         this.setFixedRotation();
-        // this.CreateMiningCollisions(playerSensor);
-        // this.scene.input.on("pointermove", (pointer) =>
-        //     this.setFlipX(pointer.worldX < this.x)
-        // );
-
-        this.playerFacing = {
-            left: "LEFT",
-            right: "RIGHT",
-        };
-        this.currentFacing = this.playerFacing.right;
     }
 
     static preload(scene) {
+        /* Characters */
         scene.load.atlas(
-            "dino",
-            "assets/images/dino.png",
-            "assets/images/dino_atlas.json"
+            "male1",
+            "assets/images/villager-males.png",
+            "assets/images/male1.json"
         );
-        scene.load.animation("human01_anim", "assets/images/dino_anim.json");
-        scene.load.spritesheet("items", "assets/images/1bit 16px icons.png", {
-            frameWidth: 24.8,
-            frameHeight: 32,
-        }); // phaser가 알아서 잘라서 쓸거다. 스프라이트 시트의 셀 수를 세기만 하면 된다.
     }
 
     get velocity() {
@@ -65,34 +43,51 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
         const speed = 2.5;
         let playerVelocity = new Phaser.Math.Vector2(); //  2D 벡터
+        let motion = "idle";
         if (this.inputKeys.left.isDown) {
             playerVelocity.x = -1;
+            this.anims.play(`${this.playerTexture}-walk-left`, true);
+            motion = "left";
             // this.x -= speed;
         } else if (this.inputKeys.right.isDown) {
             playerVelocity.x = 1;
+            this.anims.play(`${this.playerTexture}-walk-right`, true);
+            motion = "right";
             // this.x += speed;
         }
         if (this.inputKeys.up.isDown) {
             playerVelocity.y = -1;
+            if (motion === "idle") {
+                this.anims.play(`${this.playerTexture}-walk-up`, true);
+                motion = "up";
+            }
+
             // this.y -= speed;
         } else if (this.inputKeys.down.isDown) {
             playerVelocity.y = 1;
+            if (motion === "idle") {
+                this.anims.play(`${this.playerTexture}-walk-down`, true);
+                motion = "down";
+            }
             // this.y += speed;
         }
+        if (motion === "idle") {
+            this.anims.play(`${this.playerTexture}-idle-down`, true);
+        }
+
         playerVelocity.normalize(); // 대각선인 경우 1.4의 속도이기 때문에 정규화(normalize)를 통해 속도를 1로 만든다. 이 주석에서 속도란, speed가 아니라 좌표 변화량을 뜻한다.
         playerVelocity.scale(speed);
         this.setVelocity(playerVelocity.x, playerVelocity.y); // 실제로 player오브젝트를 움직인다.
-        let motion = "";
-        if (
-            Math.abs(this.velocity.x) > 0.1 ||
-            Math.abs(this.velocity.y) > 0.1
-        ) {
-            this.anims.play("walk", true); // anim.json 에 설정된 key 값
-            motion = "walk";
-        } else {
-            this.anims.play("idle", true); // anim.json 에 설정된 key 값
-            motion = "idle";
-        }
+        // if (
+        //     Math.abs(this.velocity.x) > 0.1 ||
+        //     Math.abs(this.velocity.y) > 0.1
+        // ) {
+        //     this.anims.play("walk", true); // anim.json 에 설정된 key 값
+        //     motion = "walk";
+        // } else {
+        //     this.anims.play("idle", true); // anim.json 에 설정된 key 값
+        //     motion = "idle";
+        // }
         this.scene.socket.emit("movement", {
             x: this.x,
             y: this.y,

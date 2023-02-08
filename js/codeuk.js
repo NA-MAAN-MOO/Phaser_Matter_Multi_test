@@ -1,15 +1,20 @@
 import MainScene from "./scene/Mainscene.js";
 
 const config = {
-    width: "50%", //  scene이 그려지는 canvas의 width 값
-    height: "50%", //  scene이 그려지는 canvas의 height 값
-    backgroundColor: "#999999", //  scene이 그려지는 canvas의 backgroundColor 값
+    width: "100%", //  scene이 그려지는 canvas의 width 값
+    height: "100%", //  scene이 그려지는 canvas의 height 값
+    backgroundColor: "#EEEEEE", //  scene이 그려지는 canvas의 backgroundColor 값
     type: Phaser.AUTO,
     parent: "codeuk",
     scene: [MainScene],
-    scale: {
-        zoom: 2,
-    },
+    // scale: {
+    //     scale: {
+    //         mode: Phaser.Scale.FIT,
+    //         // mode: Phaser.Scale.ScaleModes.RESIZE,
+    //         width: window.innerWidth,
+    //         height: window.innerHeight,
+    //     },
+    // },
     physics: {
         default: "matter",
         matter: {

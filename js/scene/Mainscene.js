@@ -1,3 +1,4 @@
+import { createCharacterAnims } from "../anims/CharacterAnims.js";
 import OtherPlayer from "../objects/OtherPlayer.js";
 import Player from "../objects/Player.js";
 import Resource from "../objects/Resources.js";
@@ -26,36 +27,36 @@ export default class MainScene extends Phaser.Scene {
         Player.preload(this);
         Resource.preload(this);
         OtherPlayer.preload(this);
-        this.load.image("tiles", "assets/images/tileset x1.png");
-        this.load.tilemapTiledJSON("map", "assets/images/map.json");
+        this.load.image("ground", "assets/images/ground.png");
+        this.load.tilemapTiledJSON("groundTile", "assets/images/ground.json");
     }
     create() {
         // 생성해야 하는 것, 게임 오브젝트 등
-        const map = this.make.tilemap({ key: "map" });
-        this.map = map;
-        const tileset = map.addTilesetImage(
-            "tileset x1",
-            "tiles",
-            32,
-            32,
+
+        this.map = this.make.tilemap({ key: "groundTile" });
+        const tileset = this.map.addTilesetImage("ground", "ground");
+
+        const floorLayer = this.map.createStaticLayer(
+            "tilelayer",
+            tileset,
             0,
             0
-        ); // 32x32 픽셀 타일
-        const layer1 = map.createStaticLayer("Tile Layer 1", tileset, 0, 0);
-        const layer2 = map.createStaticLayer("Tile Layer 2", tileset, 0, 0);
-        layer2.setCollisionByProperty({ collides: true });
-        this.matter.world.convertTilemapLayer(layer2);
+        );
+        floorLayer.setCullPadding(8, 8);
+        floorLayer.setCollisionByProperty({ collides: true });
+        this.matter.world.convertTilemapLayer(floorLayer);
 
-        this.map.getObjectLayer("Resources").objects.forEach((resource) => {
-            new Resource({ scene: this, resource });
-        });
+        // this.map.getObjectLayer("Resources").objects.forEach((resource) => {
+        //     new Resource({ scene: this, resource });
+        // });
 
         this.player = new Player({
             scene: this,
-            x: this.y,
-            y: this.x,
-            texture: "dino", // 이미지 이름
-            frame: "dinosprites_doux_0", // atlas.json의 첫번째 filename
+            x: this.x,
+            y: this.y,
+            texture: "male1", // 이미지 이름
+            id: this.socketId,
+            frame: "down-1", // atlas.json의 첫번째 filename
         });
         this.player.inputKeys = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -64,10 +65,12 @@ export default class MainScene extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D,
         });
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 0.8;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
-        camera.setBounds(0, 0, this.game.config.width, this.game.config.height);
+        // camera.setBounds(0, 0, this.game.config.width, this.game.config.height);
+
+        createCharacterAnims(this.anims);
 
         this.otherPlayers = [];
 
@@ -98,6 +101,9 @@ export default class MainScene extends Phaser.Scene {
     }
 
     update() {
+        // if (!this.player) {
+        //     return;
+        // }
         this.player.update();
     }
 
@@ -128,12 +134,25 @@ export default class MainScene extends Phaser.Scene {
         this.otherPlayers.forEach((player) => {
             if (player.socketId === payLoad.socketId) {
                 switch (payLoad.motion) {
-                    case "walk":
-                        player.anims.play("walk", true);
+                    case "left":
+                        player.play(`${this.playerTexture}-walk-left`, true);
+                        player.setPosition(payLoad.x, payLoad.y);
+                        break;
+                    case "right":
+                        player.play(`${this.playerTexture}-walk-right`, true);
+                        player.setPosition(payLoad.x, payLoad.y);
+                        break;
+                    case "up":
+                        player.play(`${this.playerTexture}-walk-up`, true);
+                        player.setPosition(payLoad.x, payLoad.y);
+                        break;
+                    case "down":
+                        player.play(`${this.playerTexture}-walk-down`, true);
                         player.setPosition(payLoad.x, payLoad.y);
                         break;
                     case "idle":
-                        player.anims.play("idle", true);
+                        player.play(`${this.playerTexture}-walk-idle`, true);
+                        player.setPosition(payLoad.x, payLoad.y);
                         break;
                 }
             }

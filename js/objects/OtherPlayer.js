@@ -30,16 +30,12 @@ export default class OtherPlayer extends Phaser.Physics.Matter.Sprite {
     }
 
     static preload(scene) {
+        /* Characters */
         scene.load.atlas(
-            "dino",
-            "assets/images/dino.png",
-            "assets/images/dino_atlas.json"
+            "male1",
+            "assets/villager-males.png",
+            "assets/male1.json"
         );
-        scene.load.animation("human01_anim", "assets/images/dino_anim.json");
-        scene.load.spritesheet("items", "assets/images/1bit 16px icons.png", {
-            frameWidth: 24.8,
-            frameHeight: 32,
-        }); // phaser가 알아서 잘라서 쓸거다. 스프라이트 시트의 셀 수를 세기만 하면 된다.
     }
 
     get velocity() {
