@@ -46,11 +46,12 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         // socket이 연결 해제됩니다~
         console.log("user disconnected!!!");
-        players.forEach((player) => {
-            if (player.socketId !== socket.id) {
-                player.socket.emit("playerDisconnect", socket.id);
-            }
-        });
+        socket.broadcast.emit("playerDisconnect", socket.id);
+        // players.forEach((player) => {
+        //     if (player.socketId !== socket.id) {
+        //         player.socket.emit("playerDisconnect", socket.id);
+        //     }
+        // });
         players = players.filter((player) => player.socketId !== socket.id);
     });
 

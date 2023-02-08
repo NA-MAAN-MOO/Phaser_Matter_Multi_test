@@ -1,8 +1,7 @@
 export default class Player extends Phaser.Physics.Matter.Sprite {
     constructor(data) {
-        let { scene, x, y, texture, frame, socketId } = data;
+        let { scene, x, y, texture, frame } = data;
         super(scene.matter.world, x, y, texture, frame);
-        this.socketId = socketId;
         this.touching = [];
         this.scene.add.existing(this); // 플레이어 객체가 생기는 시점.
         // icons
@@ -64,7 +63,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
     update() {
         // 초마다 60프레임마다(?) 호출되는 것, 매 틱마다 업데이트 되야하는 것인듯.
 
-        const speed = 2;
+        const speed = 2.5;
         let playerVelocity = new Phaser.Math.Vector2(); //  2D 벡터
         if (this.inputKeys.left.isDown) {
             playerVelocity.x = -1;
