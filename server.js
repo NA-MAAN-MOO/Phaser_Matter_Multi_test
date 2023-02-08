@@ -68,20 +68,24 @@ io.on("connection", (socket) => {
     });
 
     socket.on("movement", (xy) => {
-        players.forEach((player) => {
-            if (player.socketId !== socket.id) {
-                const payLoad = {
-                    socketId: socket.id,
-                    x: xy.x,
-                    y: xy.y,
-                    motion: xy.motion,
-                };
-                player.socket.emit("updateLocation", payLoad);
-            } else {
-                player.x = xy.x;
-                player.y = xy.y;
-            }
-        });
+        const payLoad = {
+            socketId: socket.id,
+            x: xy.x,
+            y: xy.y,
+            motion: xy.motion,
+        };
+        socket.broadcast.emit("updateLocation", payLoad);
+        playerInfo.x = xy.x;
+        playerInfo.y = xy.y;
+        // players.forEach((player) => {
+        //     if (player.socketId !== socket.id) {
+
+        //         player.socket.emit("updateLocation", payLoad);
+        //     } else {
+        //         player.x = xy.x;
+        //         player.y = xy.y;
+        //     }
+        // });
     });
 });
 

@@ -127,15 +127,15 @@ export default class MainScene extends Phaser.Scene {
     updateLocation(payLoad) {
         this.otherPlayers.forEach((player) => {
             if (player.socketId === payLoad.socketId) {
-                player.x = payLoad.x;
-                player.y = payLoad.y;
-                player.setPosition(payLoad.x, payLoad.y);
-                if (payLoad.motion === "walk") {
-                    player.anims.play("walk", true);
-                } else {
-                    player.anims.play("idle", true);
+                switch (payLoad.motion) {
+                    case "walk":
+                        player.anims.play("walk", true);
+                        player.setPosition(payLoad.x, payLoad.y);
+                        break;
+                    case "idle":
+                        player.anims.play("idle", true);
+                        break;
                 }
-                return;
             }
         });
     }
