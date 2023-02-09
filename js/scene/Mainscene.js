@@ -32,12 +32,16 @@ export default class MainScene extends Phaser.Scene {
     this.load.tilemapTiledJSON("groundTile", "assets/images/groundNew.json");
     this.load.image("block1", "assets/images/block1.png");
     this.load.image("block2", "assets/images/block2.png");
+
+    this.load.image("resource", "assets/images/resource.png");
+
     this.load.atlas(
       "blocks",
       "assets/images/resource.png",
       "assets/images/resource.json"
     );
     this.load.json("blockss", "assets/images/resource.json");
+    this.load.json("groundNew", "assets/images/groundNew.json");
     // this.load.json("resources", "assets/resource.json");
   }
   create() {
@@ -52,21 +56,36 @@ export default class MainScene extends Phaser.Scene {
     this.matter.world.convertTilemapLayer(floorLayer);
 
     const shapes = this.cache.json.get("blockss");
+    const groundNewJson = this.cache.json.get("groundNew");
+
+    const tilesetObj = this.map.addTilesetImage("resource", "resource");
+    let shpa = tilesetObj.tileData[1].objectgroup.objects[0].polygon;
+    console.log(tilesetObj.tileData[1].objectgroup.objects[0].polygon);
+
+    console.log(tilesetObj);
+    console.log(groundNewJson);
+
     // this.map.getObjectLayer("obj").objects.forEach((resource) => {
     //   new Resource({ scene: this, resource });
     // });
 
-    // var ground = this.matter.add.sprite(0, 0, "sheet", "ground", {
-    //   shape: shapes.ground,
-    // });
-    // ground.setPosition(0 + ground.centerOfMass.x, 280 + ground.centerOfMass.y);
-
+    // Tiled로만 구현
     this.map.getObjectLayer("obj").objects.forEach((resource) => {
-      let resourceName = resource.name;
-      this.matter.add.sprite(resource.x, resource.y, resource.name, undefined, {
-        shape: shapes.block1,
-      });
-      //   this.matter.add.sprite(0, 0, "sheet", "ground", { shape: shapes.ground });
+      console.log(resource);
+      console.log(shapes.block1);
+      let sp = this.matter.add.sprite(resource.x, resource.y, resource.name);
+
+      const { Body, Bodies } = Phaser.Physics.Matter.Matter;
+
+      let verticeCollider = Bodies.fromVertices(sp.x, sp.y, shpa);
+      sp.setExistingBody(verticeCollider);
+      sp.setStatic(true);
+      sp.setOrigin(0.5, 0.72);
+
+      // Physics Editor 이용해 구현
+      //   this.matter.add.sprite(resource.x, resource.y, resource.name, undefined, {
+      //     shape: shapes.block1,
+      //   });
     });
 
     this.player = new Player({
