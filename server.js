@@ -13,6 +13,8 @@ app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"));
 // Store a list of all the players
 let players = [];
 
+httpServer.listen(5000);
+
 io.on("connection", (socket) => {
     // socket이 연결됩니다~ 이 안에서 서버는 연결된 클라이언트와 소통할 준비가 됨
     console.log("a user connected");
@@ -89,19 +91,3 @@ io.on("connection", (socket) => {
         // });
     });
 });
-
-httpServer.listen(3000);
-
-// 서버에 들어오는 유저에게 id 값좌 좌표값 할당
-function gpId() {
-    return (
-        Math.floor(Math.random() + 100) * Math.floor(Math.random() * 100) +
-        Math.floor(Math.random() * 100)
-    );
-}
-function randomX() {
-    return Math.floor(Math.random() * 700) + 35;
-}
-function randomY() {
-    return Math.floor(Math.random() * 300) + 50;
-}
